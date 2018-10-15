@@ -25,6 +25,22 @@ class App extends Component {
       })
   }
 
+  loadMoreCharacters = () => {
+    let url = this.state.fetchMoreCharacters;
+    fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        let characters = [...this.state.characters, ...data.results];
+        let fetchMoreCharacters = data.info.next
+        this.setState({
+          characters,
+          fetchMoreCharacters
+        })
+      })
+  }
+
   render() {
     let characters = this.state.characters;
     console.log(characters);
@@ -36,6 +52,7 @@ class App extends Component {
           <h1 className="App__title">Rick and Morty characters infromation app</h1>
           <div className="App__body">
             <div className="App__sideBar">
+              <button onClick={this.loadMoreCharacters}>Load more characters</button>
               {
                 characters.map((character) => {
                   return (
