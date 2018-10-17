@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
+import CharacterInformation from './components/CharacterInformation';
+
 import './App.css';
 import coverImg from './images/cover.jpg';
 
 class App extends Component {
   state = {
     characters: [],
-    fetchMoreCharacters: ''
+    fetchMoreCharacters: '',
+    selectedCharacter: {
+      location: '',
+      origin: ''
+    }
   }
 
   componentDidMount(){
@@ -41,9 +47,18 @@ class App extends Component {
       })
   }
 
+  selectCharacter = (index) => {
+    let selectedCharacter = this.state.characters[index]
+    this.setState({
+      selectedCharacter
+    })
+  }
+
   render() {
     let characters = this.state.characters;
+    let selectedCharacter = this.state.selectedCharacter;
     console.log(characters);
+    console.log(selectedCharacter);
     
     return (
       <Router>
@@ -52,11 +67,14 @@ class App extends Component {
           <h1 className="App__title">Rick and Morty characters infromation app</h1>
           <div className="App__body">
             <div className="App__sideBar">
-              <button onClick={this.loadMoreCharacters}>Load more characters</button>
+              <button 
+                disabled={this.state.fetchMoreCharacters === ''? true:false} 
+                onClick={this.loadMoreCharacters}
+              >Load more characters</button>
               {
-                characters.map((character) => {
+                characters.map((character, index) => {
                   return (
-                    <li>
+                    <li onClick={()=>{this.selectCharacter(index)}} key={character.id}>
                       <Link to={`/characters/${character.id}`}>{character.name}</Link>
                     </li>
                   );
@@ -64,7 +82,12 @@ class App extends Component {
               }
             </div>
             <main className="App__informationsArea">
-              INFO
+              
+              <Route 
+                path="/characters/:id"
+                render={() => (<CharacterInformation characterInfo={this.state.selectedCharacter}/>)}
+              />
+              
             </main>
           </div>
         </div>
